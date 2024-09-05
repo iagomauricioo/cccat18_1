@@ -1,11 +1,11 @@
 import request from 'supertest';
-import app from '../src/signup'; 
+import app from '../src/signup';  // O caminho onde sua aplicação Express está sendo exportada
 import pgp from "pg-promise";
-
 
 const connection = pgp()("postgres://postgres:123456@localhost:5432/app");
 
 beforeEach(async () => {
+  // Código para limpar ou resetar o banco de dados
   await connection.query("DELETE FROM ccca.account");
 });
 
@@ -16,7 +16,7 @@ describe('POST /signup', () => {
       .send({
         account_id: "id",
         name: "John Doe",
-        email: "johndoe@example.com",
+        email: "johndoe@example.com", // Use um e-mail fixo, pois o DB será limpo antes
         cpf: "132.991.114-85",
         carPlate: "ABC1234",
         isPassenger: true,
@@ -28,7 +28,7 @@ describe('POST /signup', () => {
     expect(response.body).toHaveProperty('accountId');
   });
 
-  it('should return 422 when invalid email is provided', async () => {
+  it('Deve retonar 422 se o e-mail for inválido', async () => {
     const response = await request(app)
       .post('/signup')
       .send({
@@ -60,5 +60,50 @@ describe('POST /signup', () => {
 
     expect(response.status).toBe(422);
     expect(response.body.message).toBe(-3);
+  });
+
+  it('Deve retonar 422 se o e-mail já existir', async () => {
+    const response = await request(app)
+      .post('/signup')
+      .send({
+        name: "John Doe",
+        email: "johndoe@email.com",
+        cpf: "132.991.114-85",
+        carPlate: "ABC1234",
+        isPassenger: true,
+        isDriver: false,
+        password: "mysecurepassword"
+      });
+    const response2 = await request(app)
+    .post('/signup')
+    .send({
+      name: "John Doe",
+      email: "johndoe@email.com",
+      cpf: "132.991.114-85",
+      carPlate: "ABC1234",
+      isPassenger: true,
+      isDriver: false,
+      password: "mysecurepassword"
+    });
+      expect(response.status).toBe(200);
+      expect(response2.status).toBe(422);
+      expect(response2.body.message).toBe(-4);
+    });
+
+  it('deve retornar 422 se a placa do carro for inválida', async () => {
+    const response = await request(app)
+      .post('/signup')
+      .send({
+        name: "John Doe",
+        email: "teste@email.com",
+        cpf: "132.991.114-85",
+        carPlate: "ABC!!1234",
+        isPassenger: true,
+        isDriver: false,
+        password: "mysecurepassword"
+      });
+
+    expect(response.status).toBe(422);
+    expect(response.body.message).toBe(-5);
   });
 });
