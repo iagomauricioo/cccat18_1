@@ -2,13 +2,14 @@ import request from 'supertest';
 import app from '../src/signup';  // O caminho onde sua aplicação Express está sendo exportada
 
 describe('POST /signup', () => {
-  it('should return 200 and create an account', async () => {
+  it('deve retornar 200 e criar uma conta', async () => {
     const response = await request(app)
       .post('/signup')
       .send({
+        account_id: "id",
         name: "John Doe",
-        email: "john.doe@example.com",
-        cpf: "12345678900",
+        email: "johndoe22@example.com",
+        cpf: "132.991.114-85",
         carPlate: "ABC1234",
         isPassenger: true,
         isDriver: false,
@@ -25,7 +26,7 @@ describe('POST /signup', () => {
       .send({
         name: "John Doe",
         email: "invalid-email",
-        cpf: "12345678900",
+        cpf: "132.991.114-85",
         carPlate: "ABC1234",
         isPassenger: true,
         isDriver: false,
@@ -34,5 +35,22 @@ describe('POST /signup', () => {
 
     expect(response.status).toBe(422);
     expect(response.body.message).toBe(-2);
+  });
+
+  it('deve retornar 422 se nome do usuário tiver só o primeiro nome', async () => {
+    const response = await request(app)
+      .post('/signup')
+      .send({
+        name: "John",
+        email: "teste@email.com",
+        cpf: "132.991.114-85",
+        carPlate: "ABC1234",
+        isPassenger: true,
+        isDriver: false,
+        password: "mysecurepassword"
+      });
+
+    expect(response.status).toBe(422);
+    expect(response.body.message).toBe(-3);
   });
 });
