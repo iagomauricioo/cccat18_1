@@ -44,7 +44,7 @@ app.post("/signup", async function (req, res) {
 		if (typeof result === "number") {
 			res.status(422).json({ message: result });
 		} else {
-			res.status(200).json(result);
+			res.json(result);
 		}
 	} finally {
 		await connection.$pool.end();
