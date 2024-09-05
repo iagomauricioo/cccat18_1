@@ -1,5 +1,5 @@
 import request from 'supertest';
-import app from '../src/signup';  // O caminho onde sua aplicação Express está sendo exportada
+import app, { ERROR_MESSAGES } from '../src/signup';  // O caminho onde sua aplicação Express está sendo exportada
 import pgp from "pg-promise";
 
 const connection = pgp()("postgres://postgres:123456@localhost:5432/app");
@@ -42,7 +42,7 @@ describe('POST /signup', () => {
       });
 
     expect(response.status).toBe(422);
-    expect(response.body.message).toBe(-2);
+    expect(response.body.message).toBe(ERROR_MESSAGES.invalidEmail);
   });
 
   it('deve retornar 422 se nome do usuário tiver só o primeiro nome', async () => {
@@ -59,7 +59,7 @@ describe('POST /signup', () => {
       });
 
     expect(response.status).toBe(422);
-    expect(response.body.message).toBe(-3);
+    expect(response.body.message).toBe(ERROR_MESSAGES.invalidName);
   });
 
   it('Deve retonar 422 se o e-mail já existir', async () => {
@@ -87,7 +87,7 @@ describe('POST /signup', () => {
     });
       expect(response.status).toBe(200);
       expect(response2.status).toBe(422);
-      expect(response2.body.message).toBe(-4);
+      expect(response2.body.message).toBe(ERROR_MESSAGES.emailExists);
     });
 
   it('deve retornar 422 se a placa do carro for inválida', async () => {
@@ -104,6 +104,6 @@ describe('POST /signup', () => {
       });
 
     expect(response.status).toBe(422);
-    expect(response.body.message).toBe(-5);
+    expect(response.body.message).toBe(ERROR_MESSAGES.invalidCarPlate);
   });
 });
