@@ -6,7 +6,7 @@ https://branas.io
 
 <hr>
 
-# Aluno: Iago Mauricio
+# Aluno: Iago Mauricio (Turma 18, 2024.2)
 
 O objetivo dessa aula é refatorar um código em TypeScript com os conhecimentos que já temos previamente e o que também adquirimos na # Aula 001.
 
