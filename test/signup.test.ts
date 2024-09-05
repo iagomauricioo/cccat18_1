@@ -1,5 +1,5 @@
 import request from 'supertest';
-import app, { ERROR_MESSAGES } from '../src/signup';  // O caminho onde sua aplicação Express está sendo exportada
+import app, { ERROR_MESSAGES } from '../src/signup';
 import pgp from "pg-promise";
 
 const connection = pgp()("postgres://postgres:123456@localhost:5432/app");
