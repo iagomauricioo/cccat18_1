@@ -18,7 +18,7 @@ const isValid = (nameIsValid: boolean, emailIsValid: boolean, cpfIsValid: boolea
 	return nameIsValid && emailIsValid && cpfIsValid && carPlateIsValid;
 }
 
-app.post("/signup", async function (req, res) {
+app.post("/signup", async (req, res) => {
 	const input = req.body;
 	const connection = pgp()("postgres://postgres:123456@localhost:5432/app");
 	const id = crypto.randomUUID();
@@ -47,6 +47,23 @@ app.post("/signup", async function (req, res) {
 	if (resultIsOk) res.json(result);
 	if (!resultIsOk) res.status(422).json({ message: result });
 	await connection.$pool.end();
+});
+
+app.get("/account/:id", async (req, res) => {
+	const connection = pgp()("postgres://postgres:123456@localhost:5432/app");
+    const accountId = req.params.id;
+    try {
+        const [account] = await connection.query('SELECT * FROM ccca.account WHERE account_id = $1', [accountId]);
+    
+    if (account) {
+        res.json(account);
+      } else {
+        res.status(404).json({ message: 'Account not found' });
+      }
+    } catch (error) {
+      console.error('Error fetching account:', error);
+      res.status(500).json({ message: 'Internal Server Error' });
+    }
 });
 
 app.listen(3000, () => {
