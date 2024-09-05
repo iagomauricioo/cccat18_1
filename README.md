@@ -89,3 +89,9 @@ app.listen(3000);
 ```
 
 A ideia é refatorar isto e tornar mais legível.
+
+Acesse o arquivo atual em `src/signup.ts`
+
+ou
+
+<a href="https://github.com/iagomauricioo/cccat18_1/blob/master/src/signup.ts">Clique aqui</a>
