@@ -1,5 +1,13 @@
 import request from 'supertest';
-import app from '../src/signup';  // O caminho onde sua aplicação Express está sendo exportada
+import app from '../src/signup'; 
+import pgp from "pg-promise";
+
+
+const connection = pgp()("postgres://postgres:123456@localhost:5432/app");
+
+beforeEach(async () => {
+  await connection.query("DELETE FROM ccca.account");
+});
 
 describe('POST /signup', () => {
   it('deve retornar 200 e criar uma conta', async () => {
@@ -8,7 +16,7 @@ describe('POST /signup', () => {
       .send({
         account_id: "id",
         name: "John Doe",
-        email: "johndoe22@example.com",
+        email: "johndoe@example.com",
         cpf: "132.991.114-85",
         carPlate: "ABC1234",
         isPassenger: true,
