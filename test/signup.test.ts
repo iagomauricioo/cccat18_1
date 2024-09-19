@@ -1,99 +1,99 @@
-import request from 'supertest';
-import app, { ERROR_MESSAGES } from '../src/signup';
-import pgp from "pg-promise";
+import axios from "axios";
 
-const connection = pgp()("postgres://postgres:123456@localhost:5432/app");
-beforeEach(async () => {
-  await connection.query("DELETE FROM ccca.account");
+axios.defaults.validateStatus = function () {
+  return true;
+}
+
+test("Deve criar a conta do usuário", async function () {
+  const input = {
+    name: "John Doe",
+    email: `john.doe${Math.random()}@gmail.com`,
+    cpf: "13299111485",
+    password: "123456",
+    isPassenger: true
+  };
+  const responseSignup = await axios.post("http://localhost:3000/signup", input);
+  const outputSignup = responseSignup.data;
+  expect(outputSignup.accountId).toBeDefined();
+  const responseGetAccount = await axios.get(`http://localhost:3000/accounts/${outputSignup.accountId}`);
+  const outputGetAccount = responseGetAccount.data;
+  expect(outputGetAccount.name).toBe(input.name);
+  expect(outputGetAccount.email).toBe(input.email);
+  expect(outputGetAccount.cpf).toBe(input.cpf);
+  expect(outputGetAccount.password).toBe(input.password);
+  expect(outputGetAccount.is_passenger).toBe(input.isPassenger);
 });
-describe('POST /signup', () => {
-  it('deve retornar 200 e criar uma conta', async () => {
-    const response = await request(app)
-      .post('/signup')
-      .send({
-        account_id: "id",
-        name: "John Doe",
-        email: "johndoe@example.com",
-        cpf: "132.991.114-85",
-        carPlate: "ABC1234",
-        isPassenger: true,
-        isDriver: false,
-        password: "mysecurepassword"
-      });
-    expect(response.status).toBe(200);
-    expect(response.body).toHaveProperty('accountId');
-  });
-  it('Deve retonar 422 se o e-mail for inválido', async () => {
-    const response = await request(app)
-      .post('/signup')
-      .send({
-        name: "John Doe",
-        email: "invalid-email",
-        cpf: "132.991.114-85",
-        carPlate: "ABC1234",
-        isPassenger: true,
-        isDriver: false,
-        password: "mysecurepassword"
-      });
-    expect(response.status).toBe(422);
-    expect(response.body.message).toBe(ERROR_MESSAGES.invalidEmail);
-  });
-  it('deve retornar 422 se nome do usuário tiver só o primeiro nome', async () => {
-    const response = await request(app)
-      .post('/signup')
-      .send({
-        name: "John",
-        email: "teste@email.com",
-        cpf: "132.991.114-85",
-        carPlate: "ABC1234",
-        isPassenger: true,
-        isDriver: false,
-        password: "mysecurepassword"
-      });
 
-    expect(response.status).toBe(422);
-    expect(response.body.message).toBe(ERROR_MESSAGES.invalidName);
-  });
-  it('Deve retonar 422 se o e-mail já existir', async () => {
-    const response = await request(app)
-      .post('/signup')
-      .send({
-        name: "John Doe",
-        email: "johndoe@email.com",
-        cpf: "132.991.114-85",
-        carPlate: "ABC1234",
-        isPassenger: true,
-        isDriver: false,
-        password: "mysecurepassword"
-      });
-    const response2 = await request(app)
-    .post('/signup')
-    .send({
-      name: "John Doe",
-      email: "johndoe@email.com",
-      cpf: "132.991.114-85",
-      carPlate: "ABC1234",
-      isPassenger: true,
-      isDriver: false,
-      password: "mysecurepassword"
-    });
-      expect(response.status).toBe(200);
-      expect(response2.status).toBe(422);
-      expect(response2.body.message).toBe(ERROR_MESSAGES.emailExists);
-    });
-  it('deve retornar 422 se a placa do carro for inválida', async () => {
-    const response = await request(app)
-      .post('/signup')
-      .send({
-        name: "John Doe",
-        email: "teste@email.com",
-        cpf: "132.991.114-85",
-        carPlate: "ABC!!1234",
-        isPassenger: true,
-        isDriver: false,
-        password: "mysecurepassword"
-      });
-    expect(response.status).toBe(422);
-    expect(response.body.message).toBe(ERROR_MESSAGES.invalidCarPlate);
-  });
+
+test("Não deve criar a conta de um usuário já existente", async function () {
+  const input = {
+    name: "John Doe",
+    email: `john.doe${Math.random()}@gmail.com`,
+    cpf: "13299111485",
+    password: "123456",
+    isPassenger: true
+  };
+  await axios.post("http://localhost:3000/signup", input);
+  const responseSignup = await axios.post("http://localhost:3000/signup", input);
+  const outputSignup = responseSignup.data;
+  expect(responseSignup.status).toBe(422);
+  expect(outputSignup.message).toBe(-4);
+});
+
+test("Não deve criar a conta de um usuário com nome inválido", async function () {
+  const input = {
+    name: "John",
+    email: `john.doe${Math.random()}@gmail.com`,
+    cpf: "13299111485",
+    password: "123456",
+    isPassenger: true
+  };
+  const responseSignup = await axios.post("http://localhost:3000/signup", input);
+  const outputSignup = responseSignup.data;
+  expect(responseSignup.status).toBe(422);
+  expect(outputSignup.message).toBe(-3);
+});
+
+test("Não deve criar a conta de um usuário com email inválido", async function () {
+  const input = {
+    name: "John Doe",
+    email: `john.doe${Math.random()}gmail.com`,
+    cpf: "13299111485",
+    password: "123456",
+    isPassenger: true
+  };
+  const responseSignup = await axios.post("http://localhost:3000/signup", input);
+  const outputSignup = responseSignup.data;
+  expect(responseSignup.status).toBe(422);
+  expect(outputSignup.message).toBe(-2);
+});
+
+test("Não deve criar a conta de um usuário com cpf inválido", async function () {
+  const input = {
+    name: "John Doe",
+    email: `john.doe${Math.random()}@gmail.com`,
+    cpf: "13299111488",
+    password: "123456",
+    isPassenger: true
+  };
+  const responseSignup = await axios.post("http://localhost:3000/signup", input);
+  const outputSignup = responseSignup.data;
+  expect(responseSignup.status).toBe(422);
+  expect(outputSignup.message).toBe(-1);
+});
+
+
+test("Não deve criar a conta de um motorista com placa inválida", async function () {
+  const input = {
+    name: "John Doe",
+    email: `john.doe${Math.random()}@gmail.com`,
+    cpf: "13299111485",
+    password: "123456",
+    carPlate: "ABC1A234",
+    isDriver: true
+  };
+  const responseSignup = await axios.post("http://localhost:3000/signup", input);
+  const outputSignup = responseSignup.data;
+  expect(responseSignup.status).toBe(422);
+  expect(outputSignup.message).toBe(-5);
 });
