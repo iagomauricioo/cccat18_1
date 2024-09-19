@@ -6,7 +6,11 @@ https://branas.io
 
 <hr>
 
+<<<<<<< HEAD
 # Aluno: Iago Mauricio (Turma 18, 2024.2)
+=======
+# Aluno: Iago Mauricio
+>>>>>>> 9c16fbe (update README.md)
 
 O objetivo dessa aula é refatorar um código em TypeScript com os conhecimentos que já temos previamente e o que também adquirimos na # Aula 001.
 
@@ -88,6 +92,10 @@ app.listen(3000);
 
 ```
 
+<<<<<<< HEAD
 A ideia é refatorar isto e tornar mais legível.
 
 Acesse o arquivo atual em `src/signup.ts` ou <a href="https://github.com/iagomauricioo/cccat18_1/blob/master/src/signup.ts">Clique aqui</a>
+=======
+A ideia é refatorar isto e tornar mais legível.
+>>>>>>> 9c16fbe (update README.md)
