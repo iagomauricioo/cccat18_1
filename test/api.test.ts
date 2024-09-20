@@ -1,4 +1,5 @@
 import axios from "axios";
+import { getAccountById, signup } from "../src/signup";
 
 axios.defaults.validateStatus = function () {
   return true;
@@ -12,11 +13,10 @@ test("Deve criar a conta do usuário", async function () {
     password: "123456",
     isPassenger: true
   };
-  const responseSignup = await axios.post("http://localhost:3000/signup", input);
-  const outputSignup = responseSignup.data;
+  
+  const outputSignup = await signup(input);
   expect(outputSignup.accountId).toBeDefined();
-  const responseGetAccount = await axios.get(`http://localhost:3000/accounts/${outputSignup.accountId}`);
-  const outputGetAccount = responseGetAccount.data;
+  const outputGetAccount = await getAccountById(outputSignup.accountId);
   expect(outputGetAccount.name).toBe(input.name);
   expect(outputGetAccount.email).toBe(input.email);
   expect(outputGetAccount.cpf).toBe(input.cpf);
@@ -33,11 +33,8 @@ test("Não deve criar a conta de um usuário já existente", async function () {
     password: "123456",
     isPassenger: true
   };
-  await axios.post("http://localhost:3000/signup", input);
-  const responseSignup = await axios.post("http://localhost:3000/signup", input);
-  const outputSignup = responseSignup.data;
-  expect(responseSignup.status).toBe(422);
-  expect(outputSignup.message).toBe(-4);
+  await signup(input);
+  await expect(() => signup(input)).rejects.toThrow(new Error("Duplicated account"));
 });
 
 test("Não deve criar a conta de um usuário com nome inválido", async function () {
@@ -48,10 +45,7 @@ test("Não deve criar a conta de um usuário com nome inválido", async function
     password: "123456",
     isPassenger: true
   };
-  const responseSignup = await axios.post("http://localhost:3000/signup", input);
-  const outputSignup = responseSignup.data;
-  expect(responseSignup.status).toBe(422);
-  expect(outputSignup.message).toBe(-3);
+  await expect(() => signup(input)).rejects.toThrow(new Error("Invalid name"));
 });
 
 test("Não deve criar a conta de um usuário com email inválido", async function () {
@@ -62,10 +56,7 @@ test("Não deve criar a conta de um usuário com email inválido", async functio
     password: "123456",
     isPassenger: true
   };
-  const responseSignup = await axios.post("http://localhost:3000/signup", input);
-  const outputSignup = responseSignup.data;
-  expect(responseSignup.status).toBe(422);
-  expect(outputSignup.message).toBe(-2);
+  await expect(() => signup(input)).rejects.toThrow(new Error("Invalid email"));
 });
 
 test("Não deve criar a conta de um usuário com cpf inválido", async function () {
@@ -76,10 +67,7 @@ test("Não deve criar a conta de um usuário com cpf inválido", async function 
     password: "123456",
     isPassenger: true
   };
-  const responseSignup = await axios.post("http://localhost:3000/signup", input);
-  const outputSignup = responseSignup.data;
-  expect(responseSignup.status).toBe(422);
-  expect(outputSignup.message).toBe(-1);
+  await expect(() => signup(input)).rejects.toThrow(new Error("Invalid cpf"));
 });
 
 
@@ -92,8 +80,5 @@ test("Não deve criar a conta de um motorista com placa inválida", async functi
     carPlate: "ABC1A234",
     isDriver: true
   };
-  const responseSignup = await axios.post("http://localhost:3000/signup", input);
-  const outputSignup = responseSignup.data;
-  expect(responseSignup.status).toBe(422);
-  expect(outputSignup.message).toBe(-5);
+  await expect(() => signup(input)).rejects.toThrow(new Error("Invalid car plate"));
 });
