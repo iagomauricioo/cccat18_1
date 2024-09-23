@@ -1,9 +1,4 @@
-import axios from "axios";
-import { getAccountById, signup } from "../src/signup";
-
-axios.defaults.validateStatus = function () {
-  return true;
-}
+import { getAccount, signup } from "../src/signup";
 
 test("Deve criar a conta do usuário", async function () {
   const input = {
@@ -12,18 +7,16 @@ test("Deve criar a conta do usuário", async function () {
     cpf: "13299111485",
     password: "123456",
     isPassenger: true
-  };
-  
+  };  
   const outputSignup = await signup(input);
   expect(outputSignup.accountId).toBeDefined();
-  const outputGetAccount = await getAccountById(outputSignup.accountId);
+  const outputGetAccount = await getAccount(outputSignup.accountId);
   expect(outputGetAccount.name).toBe(input.name);
   expect(outputGetAccount.email).toBe(input.email);
   expect(outputGetAccount.cpf).toBe(input.cpf);
   expect(outputGetAccount.password).toBe(input.password);
   expect(outputGetAccount.is_passenger).toBe(input.isPassenger);
 });
-
 
 test("Não deve criar a conta de um usuário já existente", async function () {
   const input = {

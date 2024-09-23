@@ -1,5 +1,5 @@
 import express from "express"
-import { getAccountById, signup } from "./signup";
+import { getAccount, signup } from "./signup";
 const app = express();
 app.use(express.json());
 
@@ -14,7 +14,7 @@ app.post("/signup", async function (req, res) {
 });
 
 app.get("/accounts/:accountId", async function (req, res) {
-    const output = await getAccountById(req.params.accountId);
+    const output = await getAccount(req.params.accountId);
 	res.json(output);
 });
 
