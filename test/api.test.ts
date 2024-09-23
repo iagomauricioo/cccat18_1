@@ -1,5 +1,4 @@
 import axios from "axios";
-import { getAccount, signup } from "../src/signup";
 
 axios.defaults.validateStatus = function () {
   return true;
