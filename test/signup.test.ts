@@ -1,14 +1,16 @@
 import { AccountDAODatabase, AccountDAOMemory } from "../src/AccountDAO";
 import GetAccount from "../src/GetAccounts";
-import Signup from "../src/signup";
+import { MailerGatewayMemory } from "../src/MailerGateway";
+import Signup from "../src/Signup";
 
 let signup: Signup;
 let getAccount: GetAccount;
 
 beforeEach(() => {
- // const accountDAO = new AccountDAODatabase();
+  //const accountDAO = new AccountDAODatabase();
   const accountDAO = new AccountDAOMemory();
-  signup = new Signup(accountDAO);
+  const mailerGateway = new MailerGatewayMemory();
+  signup = new Signup(accountDAO, mailerGateway);
   getAccount = new GetAccount(accountDAO);
 });
 
