@@ -7,8 +7,8 @@ let signup: Signup;
 let getAccount: GetAccount;
 
 beforeEach(() => {
-  //const accountDAO = new AccountDAODatabase();
-  const accountDAO = new AccountDAOMemory();
+  const accountDAO = new AccountDAODatabase();
+  //const accountDAO = new AccountDAOMemory();
   const mailerGateway = new MailerGatewayMemory();
   signup = new Signup(accountDAO, mailerGateway);
   getAccount = new GetAccount(accountDAO);

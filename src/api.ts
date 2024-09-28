@@ -3,11 +3,9 @@ import { AccountDAODatabase } from "./AccountDAO";
 import GetAccount from "./GetAccounts";
 import { MailerGatewayMemory } from "./MailerGateway";
 import Signup from "./Signup";
-import cors from "cors";
 
 const app = express();
 app.use(express.json());
-app.use(cors());
 
 app.post("/signup", async function (req, res) {
 	const input = req.body;
