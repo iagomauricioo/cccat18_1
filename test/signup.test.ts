@@ -2,6 +2,7 @@ import { AccountDAODatabase, AccountDAOMemory } from "../src/AccountDAO";
 import GetAccount from "../src/GetAccounts";
 import { MailerGatewayMemory } from "../src/MailerGateway";
 import Signup from "../src/Signup";
+import sinon from "sinon";
 
 let signup: Signup;
 let getAccount: GetAccount;
@@ -88,4 +89,24 @@ test("Não deve criar a conta de um motorista com placa inválida", async functi
     isDriver: true
   };
   await expect(() => signup.execute(input)).rejects.toThrow(new Error("Invalid car plate"));
+});
+
+test.only("Deve criar a conta de um passageiro com Stub", async function () {
+  const mailerStub = sinon.stub(MailerGatewayMemory.prototype, "send").resolves();
+  const input = {
+    name: "John Doe",
+    email: `john.doe${Math.random()}@gmail.com`,
+    cpf: "13299111485",
+    password: "123456",
+    isPassenger: true
+  };  
+  const outputSignup = await signup.execute(input);
+  expect(outputSignup.accountId).toBeDefined();
+  const outputGetAccount = await getAccount.execute(outputSignup.accountId);
+  expect(outputGetAccount.name).toBe(input.name);
+  expect(outputGetAccount.email).toBe(input.email);
+  expect(outputGetAccount.cpf).toBe(input.cpf);
+  expect(outputGetAccount.password).toBe(input.password);
+  //expect(outputGetAccount.isPassenger).toBe(input.isPassenger);
+  mailerStub.restore();
 });
