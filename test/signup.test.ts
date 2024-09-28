@@ -91,8 +91,9 @@ test("Não deve criar a conta de um motorista com placa inválida", async functi
   await expect(() => signup.execute(input)).rejects.toThrow(new Error("Invalid car plate"));
 });
 
-test.only("Deve criar a conta de um passageiro com Stub", async function () {
+test("Deve criar a conta de um passageiro com Stub", async function () {
   const mailerStub = sinon.stub(MailerGatewayMemory.prototype, "send").resolves();
+  const getAccountByEmail = sinon.stub(AccountDAODatabase.prototype, "getAccountByEmail").resolves();
   const input = {
     name: "John Doe",
     email: `john.doe${Math.random()}@gmail.com`,
@@ -109,4 +110,5 @@ test.only("Deve criar a conta de um passageiro com Stub", async function () {
   expect(outputGetAccount.password).toBe(input.password);
   //expect(outputGetAccount.isPassenger).toBe(input.isPassenger);
   mailerStub.restore();
+  getAccountByEmail.restore();
 });

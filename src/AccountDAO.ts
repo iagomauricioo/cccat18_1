@@ -9,14 +9,14 @@ export default interface AccountDAO {
 export class AccountDAODatabase implements AccountDAO {
     async getAccountByEmail(email: string) {
         const connection = pgp()("postgres://postgres:123456@localhost:5432/app");
-        const accountData = await connection.query("select * from ccca.account where email = $1", [email]);	
+        const [accountData] = await connection.query("select * from ccca.account where email = $1", [email]);	
         await connection.$pool.end();
         return accountData;
     }
     
     async getAccountById (accountId: string) {
         const connection = pgp()("postgres://postgres:123456@localhost:5432/app");
-        const accountData = await connection.query("select * from ccca.account where account_id = $1", [accountId]);
+        const [accountData] = await connection.query("select * from ccca.account where account_id = $1", [accountId]);
         await connection.$pool.end();
         return accountData
     };
@@ -29,7 +29,7 @@ export class AccountDAODatabase implements AccountDAO {
 }
 
 export class AccountDAOMemory implements AccountDAO {
-    accounts: any[] = [];
+    accounts: any[];    
 
     constructor() {
         this.accounts = [];
@@ -42,7 +42,7 @@ export class AccountDAOMemory implements AccountDAO {
         return this.accounts.find((account: any) => account.accountId === accountId);
     }
     async saveAccount(account: any): Promise<any> {
-        this.accounts.push(account);
+        return this.accounts.push(account);
     }
 
 

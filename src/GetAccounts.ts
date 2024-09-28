@@ -6,7 +6,7 @@ export default class GetAccount {
     }
 
     async execute(accountId: string) {
-        const [accountData] = await this.accountDAO.getAccountById(accountId);
+        const accountData = await this.accountDAO.getAccountById(accountId);
         return accountData;
     }
 }

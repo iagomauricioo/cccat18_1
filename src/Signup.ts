@@ -11,7 +11,7 @@ export default class Signup {
 	
 	async execute (input: any) {
 		input.accountId = crypto.randomUUID();
-		const [accountData] = await this.accountDAO.getAccountByEmail(input.email);
+		const accountData = await this.accountDAO.getAccountByEmail(input.email);
 		if (accountData) throw new Error("Duplicated account");
 		if (!input.name.match(/[a-zA-Z] [a-zA-Z]+/)) throw new Error("Invalid name");
 		if (!input.email.match(/^(.+)@(.+)$/)) throw new Error("Invalid email");
