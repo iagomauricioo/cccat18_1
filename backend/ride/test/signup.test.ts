@@ -96,7 +96,7 @@ test("Deve criar a conta de um passageiro com Stub", async function () {
   const getAccountByEmail = sinon.stub(AccountDAODatabase.prototype, "getAccountByEmail").resolves();
   const input = {
     name: "John Doe",
-    email: `john.doe${Math.random()}@gmail.com`,
+    email: `john.doe@gmail.com`,
     cpf: "13299111485",
     password: "123456",
     isPassenger: true
@@ -111,4 +111,49 @@ test("Deve criar a conta de um passageiro com Stub", async function () {
   //expect(outputGetAccount.isPassenger).toBe(input.isPassenger);
   mailerStub.restore();
   getAccountByEmail.restore();
+});
+
+test("Deve criar a conta de um passageiro com spy", async function () {
+  const mailerSpy = sinon.spy(MailerGatewayMemory.prototype, "send");
+  const input = {
+    name: "John Doe",
+    email: `john.doe${Math.random()}@gmail.com`,
+    cpf: "13299111485",
+    password: "123456",
+    isPassenger: true
+  };  
+  const outputSignup = await signup.execute(input);
+  expect(outputSignup.accountId).toBeDefined();
+  const outputGetAccount = await getAccount.execute(outputSignup.accountId);
+  expect(outputGetAccount.name).toBe(input.name);
+  expect(outputGetAccount.email).toBe(input.email);
+  expect(outputGetAccount.cpf).toBe(input.cpf);
+  expect(outputGetAccount.password).toBe(input.password);
+  //expect(outputGetAccount.isPassenger).toBe(input.isPassenger);
+  expect(mailerSpy.calledWith(input.email, "Bem-vindo ao nosso sistema!", "...")).toBe(true);
+  mailerSpy.restore();
+});
+
+test.only("Deve criar a conta de um passageiro com mock", async function () {
+  const mailerMock = sinon.mock(MailerGatewayMemory.prototype);
+  const input = {
+    name: "John Doe",
+    email: `john.doe${Math.random()}@gmail.com`,
+    cpf: "13299111485",
+    password: "123456",
+    isPassenger: true
+  };  
+  mailerMock.expects("send").once().withArgs(input.email, "Bem-vindo ao nosso sistema!", "...").callsFake(() => {
+    console.log("Mocked");
+  });
+  const outputSignup = await signup.execute(input);
+  expect(outputSignup.accountId).toBeDefined();
+  const outputGetAccount = await getAccount.execute(outputSignup.accountId);
+  expect(outputGetAccount.name).toBe(input.name);
+  expect(outputGetAccount.email).toBe(input.email);
+  expect(outputGetAccount.cpf).toBe(input.cpf);
+  expect(outputGetAccount.password).toBe(input.password);
+  //expect(outputGetAccount.isPassenger).toBe(input.isPassenger);
+  mailerMock.verify();
+  mailerMock.restore;
 });
