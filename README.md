@@ -7,8 +7,16 @@ https://branas.io
 <hr>
 
 # Aluno: Iago Mauricio (Turma 18, 2024.2)
-O objetivo dessa aula é refatorar um código em TypeScript com os conhecimentos que já temos previamente e o que também adquirimos na # Aula 001.
+O objetivo desse curso é aprender conceitos importantes na área de programação como: Arquitetura Limpa, Código limpo, princípios SOLID, 
+Domain Driven Design (DDD), Test Driven Development (TDD), Microservices e etc.
 
+A fase atual do projeto é:
+
+- Já separei algumas responsabilidades
+- Implementei testes unitários, de integração e end-to-end (E2E)
+- Criei classes
+- Implementei designs patterns conhecidos
+- Implementei tests patterns (stub, spy, mock)
 
 ao abrir a primeira versão de `signup.ts`, você vai se deparar com um código como esse abaixo:
 
@@ -87,5 +95,5 @@ app.listen(3000);
 
 ```
 
-Acesse o arquivo atual em `src/signup.ts` ou <a href="https://github.com/iagomauricioo/cccat18_1/blob/master/src">Clique aqui</a>
+Acesse o arquivo atual em `src/signup.ts` ou <a href="https://github.com/iagomauricioo/cccat18_1/blob/master/backend/ride/src">Clique aqui</a>
 A ideia é refatorar isto e tornar mais legível.
