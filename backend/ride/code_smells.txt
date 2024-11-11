@@ -5,3 +5,4 @@
 5 - tratamento inadequado de erros
 6 - variáveis declaradas longe da utilização
 7 - método longo
+8 - "Obsessão primitiva" -> tudo é string, tudo é number, integer...

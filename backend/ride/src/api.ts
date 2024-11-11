@@ -4,6 +4,8 @@ import GetAccount from "./GetAccounts";
 import { MailerGatewayMemory } from "./MailerGateway";
 import Signup from "./Signup";
 import cors from "cors";
+import Login from "./Login";
+import connection from "./database/connection";
 
 const app = express();
 app.use(express.json());
@@ -22,6 +24,18 @@ app.post("/signup", async function (req, res) {
     }
 });
 
+app.post("/login", async function (req, res) {
+    const input = req.body;
+    try {
+        const accountDAO = new AccountDAODatabase();
+        const login = new Login(accountDAO);
+        const output = await login.execute(input);
+        res.json(output);
+    } catch (e: any) {
+        res.status(422).json({ message: e.message });
+    }
+});
+
 app.get("/accounts/:accountId", async function (req, res) {
     const accountDAO = new AccountDAODatabase();
     const getAccount = new GetAccount(accountDAO);
@@ -31,3 +45,10 @@ app.get("/accounts/:accountId", async function (req, res) {
 
 app.listen(3000);
 console.log("Server running at http://localhost:3000/");
+
+process.on("SIGINT", async () => {
+    console.log("\nRecebendo sinal de interrupção... Fechando a conexão com o banco de dados.");
+    await connection.$pool.end();
+    console.log("Conexão com o banco de dados fechada.");
+    process.exit(0);
+})
