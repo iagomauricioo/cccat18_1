@@ -1,4 +1,3 @@
-import pgp from "pg-promise";  
 import dotenv from "dotenv";
 import connection from "./database/connection";
 

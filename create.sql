@@ -1,8 +1,8 @@
-drop schema if exists ccca cascade;
+drop schema if exists uber cascade;
 
-create schema ccca;
+create schema uber;
 
-create table ccca.account (
+create table uber.account (
 	account_id uuid primary key,
 	name text not null,
 	email text not null,
